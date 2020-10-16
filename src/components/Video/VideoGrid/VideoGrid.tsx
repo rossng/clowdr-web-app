@@ -173,9 +173,15 @@ function VideoWrapperComponent(props: Props & {
                     ev.preventDefault();
                     ev.stopPropagation();
                 }}>
-                    {enableMicEl}
-                    {micPreview}
-                    {enableCamEl}
+                    <div className="toggles">
+                        <div className="toggles__toggle">
+                            {enableMicEl}
+                            {micPreview}
+                        </div>
+                        <div className="toggles__toggle">
+                            {enableCamEl}
+                        </div>
+                    </div>
                     {camPreview}
                     {!!props.mVideo ? enterButton : <LoadingSpinner message="Video service initialising, please wait" />}
                 </form>
@@ -272,7 +278,7 @@ export default function VideoGrid(props: Props) {
         };
 
         return () => {
-            window.onbeforeunload = () => {};
+            window.onbeforeunload = () => { };
         };
     }, []);
 
