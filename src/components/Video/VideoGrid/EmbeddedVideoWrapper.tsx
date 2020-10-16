@@ -33,6 +33,7 @@ import ToggleFullscreenButton from '../VideoFrontend/components/MenuBar/ToggleFu
 import { UserProfile } from '@clowdr-app/clowdr-db-schema';
 import useConference from '../../../hooks/useConference';
 import { makeCancelable } from '@clowdr-app/clowdr-db-schema/build/Util';
+import EndCallButton from '../VideoFrontend/components/Controls/EndCallButton/EndCallButton';
 
 export default function App() {
     const roomState = useRoomState();
@@ -133,6 +134,7 @@ function ParticipantStrip() {
                 {roomState !== 'disconnected' && (
                     <>
                         <ToggleScreenShareButton disabled={isReconnecting} />
+                        <EndCallButton />
                         {/*TODO: Clicking this breaks everything (inc. the sidebar updates): <EndCallButton />*/}
                         <ToggleFullscreenButton />
                         {/* TODO: <ReportToModsButton room={this.state.room} /> */}
