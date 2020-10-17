@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-
-import { ensureMediaPermissions } from '../../../utils';
-import Video, { LocalVideoTrack, LocalAudioTrack, CreateLocalTrackOptions } from 'twilio-video';
 import { makeCancelable } from '@clowdr-app/clowdr-db-schema/build/Util';
+import { useCallback, useEffect, useState } from 'react';
+import Video, { CreateLocalTrackOptions, LocalAudioTrack, LocalVideoTrack } from 'twilio-video';
+import { ensureMediaPermissions } from '../../../utils';
+
 
 export function useLocalAudioTrack(errorHandler?: (err: any) => {}) {
     const [track, setTrack] = useState<LocalAudioTrack>();
@@ -31,10 +31,6 @@ export function useLocalAudioTrack(errorHandler?: (err: any) => {}) {
         return p;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    // useEffect(() => {
-    //     return getLocalAudioTrack().cancel;
-    // }, [getLocalAudioTrack]);
 
     useEffect(() => {
         const handleStopped = () => setTrack(undefined);
@@ -85,11 +81,6 @@ export function useLocalVideoTrack(errorHandler?: (err: any) => {}) {
         return p;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    useEffect(() => {
-        // We get a new local video track when the app loads.
-        return getLocalVideoTrack().cancel;
-    }, [getLocalVideoTrack]);
 
     useEffect(() => {
         const handleStopped = () => setTrack(undefined);

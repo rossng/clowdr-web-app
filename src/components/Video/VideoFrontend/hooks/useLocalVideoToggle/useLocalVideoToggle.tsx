@@ -1,34 +1,33 @@
-import { LocalVideoTrack } from 'twilio-video';
 import { useCallback } from 'react';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
 export default function useLocalVideoToggle() {
-    const {
-        room: { localParticipant },
-        localTracks,
-        getLocalVideoTrack,
-    } = useVideoContext();
-    const videoTrack = localTracks.find(track => track.name.includes('camera')) as LocalVideoTrack;
+    const { room: { localParticipant }, videoTrack, getLocalVideoTrack } = useVideoContext();
+
+    const stopVideo = useCallback(() => {
+        videoTrack?.stop();
+
+        if (videoTrack) {
+            const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
+            localParticipant?.emit('trackUnpublished', localTrackPublication);
+        }
+    }, [localParticipant, videoTrack]);
+
+    const enableVideo = useCallback(() => {
+        if (!videoTrack) {
+            getLocalVideoTrack().promise.then(track => {
+                track?.enable();
+            });
+        }
+    }, [getLocalVideoTrack, videoTrack]);
 
     const toggleVideoEnabled = useCallback(() => {
         if (videoTrack) {
-            if (localParticipant) {
-                const localTrackPublication = localParticipant.unpublishTrack(videoTrack);
-                // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
-                localParticipant.emit('trackUnpublished', localTrackPublication);
-            }
-            videoTrack.stop();
+            stopVideo();
         } else {
-            const p = getLocalVideoTrack();
-            p.promise.then((track: LocalVideoTrack | undefined) => {
-                if (localParticipant && track) {
-                    localParticipant.publishTrack(track, { priority: 'low' });
-                }
-            });
-            return p.cancel;
+            enableVideo();
         }
-        return () => { };
-    }, [videoTrack, localParticipant, getLocalVideoTrack]);
+    }, [enableVideo, stopVideo, videoTrack]);
 
-    return [!!videoTrack, toggleVideoEnabled] as const;
+    return [!!videoTrack, toggleVideoEnabled, stopVideo, enableVideo] as const;
 }

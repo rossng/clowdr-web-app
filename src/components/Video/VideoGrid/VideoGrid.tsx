@@ -35,7 +35,7 @@ function VideoWrapperComponent(props: Props & {
 }) {
     const logger = useLogger("VideoWrapperComponent");
     const [isAudioEnabled, toggleAudioEnabled, stopAudio, enableAudio] = useLocalAudioToggle();
-    const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+    const [isVideoEnabled, toggleVideoEnabled, stopVideo, enableVideo] = useLocalVideoToggle();
 
     const unmountRef = useRef<() => void>();
     const unloadRef = useRef<EventListener>();
@@ -43,13 +43,13 @@ function VideoWrapperComponent(props: Props & {
     useEffect(() => {
         unmountRef.current = () => {
             stopAudio();
-            // toggleVideoEnabled(false);
+            stopVideo();
         }
         unloadRef.current = () => {
             stopAudio();
-            // toggleVideoEnabled(false);
+            stopVideo();
         }
-    }, [stopAudio]);
+    }, [stopAudio, stopVideo]);
 
     useEffect(() => {
         return () => {
