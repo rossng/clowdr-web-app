@@ -32,9 +32,9 @@ export function useLocalAudioTrack(errorHandler?: (err: any) => {}) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        return getLocalAudioTrack().cancel;
-    }, [getLocalAudioTrack]);
+    // useEffect(() => {
+    //     return getLocalAudioTrack().cancel;
+    // }, [getLocalAudioTrack]);
 
     useEffect(() => {
         const handleStopped = () => setTrack(undefined);
@@ -115,5 +115,5 @@ export default function useLocalTracks(errorHandler?: (err: any) => {}) {
         | LocalVideoTrack
     )[];
 
-    return { localTracks, getLocalVideoTrack, getLocalAudioTrack };
+    return { audioTrack, videoTrack, localTracks, getLocalVideoTrack, getLocalAudioTrack };
 }

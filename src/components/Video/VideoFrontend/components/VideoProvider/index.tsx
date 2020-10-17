@@ -29,6 +29,8 @@ import { CancelablePromise } from '@clowdr-app/clowdr-db-schema/build/Util';
 export interface IVideoContext {
     room: Room;
     localTracks: (LocalAudioTrack | LocalVideoTrack)[];
+    audioTrack: LocalAudioTrack | undefined;
+    videoTrack: LocalVideoTrack | undefined;
     isConnecting: boolean;
     connect: (token: string) => Promise<void>;
     onError: ErrorCallback;
@@ -66,7 +68,7 @@ export function VideoProvider({
     };
 
     // @ts-ignore
-    const { localTracks, getLocalVideoTrack, getLocalAudioTrack } = useLocalTracks(onError);
+    const { audioTrack, videoTrack, localTracks, getLocalVideoTrack, getLocalAudioTrack } = useLocalTracks(onError);
     const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
     // Register onError and onDisconnect callback functions.
@@ -80,6 +82,8 @@ export function VideoProvider({
             value={{
                 room,
                 localTracks,
+                audioTrack,
+                videoTrack,
                 isConnecting,
                 onError: onErrorCallback,
                 onConnect,

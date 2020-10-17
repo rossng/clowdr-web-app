@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { VideoRoom } from "@clowdr-app/clowdr-db-schema";
 import "./VideoGrid.scss";
 import Toggle from "react-toggle";
@@ -34,12 +34,40 @@ function VideoWrapperComponent(props: Props & {
     enteringRoom: boolean
 }) {
     const logger = useLogger("VideoWrapperComponent");
-    const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
+    const [isAudioEnabled, toggleAudioEnabled, stopAudio, enableAudio] = useLocalAudioToggle();
     const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
 
+    const unmountRef = useRef<() => void>();
+    const unloadRef = useRef<EventListener>();
+
     useEffect(() => {
-        toggleAudioEnabled(false);
-    }, [toggleAudioEnabled, toggleVideoEnabled]);
+        unmountRef.current = () => {
+            stopAudio();
+            // toggleVideoEnabled(false);
+        }
+        unloadRef.current = () => {
+            stopAudio();
+            // toggleVideoEnabled(false);
+        }
+    }, [stopAudio]);
+
+    useEffect(() => {
+        return () => {
+            if (unmountRef && unmountRef.current) {
+                unmountRef.current();
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (unloadRef && unloadRef.current) {
+            window.addEventListener("beforeunload", unloadRef.current);
+        }
+        return () => {
+            if (unloadRef && unloadRef.current)
+                window.removeEventListener("beforeunload", unloadRef.current);
+        }
+    }, []);
 
     // TODO: Disable in production
     logger.enable();
