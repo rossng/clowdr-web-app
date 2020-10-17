@@ -1,21 +1,27 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
 export default function useLocalVideoToggle() {
     const { room: { localParticipant }, videoTrack, getLocalVideoTrack } = useVideoContext();
+    const previousDeviceIdRef = useRef<string>();
 
     const stopVideo = useCallback(() => {
-        videoTrack?.stop();
+        if (videoTrack) {
+            previousDeviceIdRef.current = videoTrack.mediaStreamTrack.getSettings().deviceId;
+        }
+
+        videoTrack?.disable();
 
         if (videoTrack) {
             const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
             localParticipant?.emit('trackUnpublished', localTrackPublication);
         }
+        videoTrack?.stop();
     }, [localParticipant, videoTrack]);
 
     const enableVideo = useCallback(() => {
         if (!videoTrack) {
-            getLocalVideoTrack().promise.then(track => {
+            getLocalVideoTrack({ deviceId: { exact: previousDeviceIdRef.current } }).promise.then(track => {
                 track?.enable();
             });
         }

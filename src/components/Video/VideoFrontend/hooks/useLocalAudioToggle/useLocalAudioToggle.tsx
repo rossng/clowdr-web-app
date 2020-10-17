@@ -7,13 +7,16 @@ export default function useLocalAudioToggle() {
     const isEnabled = useIsTrackEnabled(audioTrack);
 
     const stopAudio = useCallback(() => {
-        audioTrack?.stop();
+        console.log(`Stopping ${audioTrack?.id}`);
+        audioTrack?.disable();
 
         if (audioTrack) {
             const localTrackPublication = localParticipant?.unpublishTrack(audioTrack);
             // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
             localParticipant?.emit('trackUnpublished', localTrackPublication);
         }
+        audioTrack?.stop();
+
     }, [audioTrack, localParticipant]);
 
     const enableAudio = useCallback(() => {
