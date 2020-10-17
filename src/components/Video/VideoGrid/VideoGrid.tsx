@@ -107,7 +107,6 @@ function VideoWrapperComponent(props: Props & {
 
     if (isAudioEnabled) {
         micPreview = <div className="local-preview-container audio">
-            <DeviceSelector />
             <div style={{
                 display: "inline-block",
                 backgroundColor: "rgba(0, 0, 128, 1)"
@@ -121,9 +120,13 @@ function VideoWrapperComponent(props: Props & {
         camPreview
             = <div className="local-preview-container video">
                 <FlipCameraButton />
-                <DeviceSelector />
                 <LocalVideoPreview />
             </div>;
+    }
+
+    let deviceSelector = <></>;
+    if (isVideoEnabled || isAudioEnabled) {
+        deviceSelector = <DeviceSelector />
     }
 
     return props.token
@@ -210,6 +213,7 @@ function VideoWrapperComponent(props: Props & {
                             {enableCamEl}
                         </div>
                     </div>
+                    {deviceSelector}
                     {camPreview}
                     {!!props.mVideo ? enterButton : <LoadingSpinner message="Video service initialising, please wait" />}
                 </form>
